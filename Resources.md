@@ -1,4 +1,4 @@
-# Important Resources and Links
+# Resources
 
 ## Papers & Code
 * [Flaschel, Kumar & De Lorenzis — hyperelastic fingerprinting pipeline paper (CMAME 2021)](https://www.sciencedirect.com/science/article/pii/S004578252500845X?via%3Dihub#sec0026)
