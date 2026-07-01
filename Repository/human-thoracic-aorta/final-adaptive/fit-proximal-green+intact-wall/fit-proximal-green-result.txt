@@ -1,0 +1,65 @@
+python .\fit-script.py
+
+=== Adaptive Material Fingerprinting ===
+Contact moritz.flaschel@fau.de for help and bug reports.
+
+The pickle database is loaded from the local path.
+Database Information:
+    models in the database: 
+        f(stretch) - #1 - incompressible
+        f(area) - #1 - incompressible
+        f(stretch) - #2 - incompressible
+        f(area) - #2 - incompressible
+        f(stretch) - #3 - incompressible
+        f(area) - #3 - incompressible
+    number of fingerprints = 2800
+    uniaxial tension: stretch ranges from 0.1 to 10.0 in the database
+
+Adaptive Material Fingerprinting Results:
+------------------------------------------------------------
+[01] f(area) - #2 - incompressible
+     formula: $2.3542e-03 \sum_{j=2}^3 \sum_{k<j} \left[ \exp\left(9.88 [\lambda_j \lambda_k - 1]\right) - 1 \right] - p [J-1]$
+     parameters: [2.3542e-03, 9.8804e+00]
+
+[02] f(area) - #2 - incompressible
+     formula: $1.1848e-03 \sum_{j=2}^3 \sum_{k<j} \left[ \exp\left(9.88 [\lambda_j \lambda_k - 1]\right) - 1 \right] - p [J-1]$
+     parameters: [1.1848e-03, 9.8804e+00]
+
+[03] f(area) - #2 - incompressible
+     formula: $6.0758e-04 \sum_{j=2}^3 \sum_{k<j} \left[ \exp\left(9.88 [\lambda_j \lambda_k - 1]\right) - 1 \right] - p [J-1]$
+     parameters: [6.0758e-04, 9.8804e+00]
+
+[04] f(area) - #3 - incompressible
+     formula: $6.2023e-12 \sum_{j=2}^3 \sum_{k<j} \left[ \exp\left(25.00 [\lambda_j \lambda_k - 1]+ 16.70\right) - \exp(16.70) \right] - p [J-1]$
+     parameters: [6.2023e-12, 2.5000e+01, 1.6700e+01]
+
+[05] f(stretch) - #3 - incompressible
+     formula: $1.6924e-11 \sum_i \left[ \exp\left(23.69 [\lambda_i - 1] + 8.40\right) - \exp(8.40)\right] - p [J-1]$
+     parameters: [1.6924e-11, 2.3689e+01, 8.4000e+00]
+
+[06] f(area) - #3 - incompressible
+     formula: $3.3623e-12 \sum_{j=2}^3 \sum_{k<j} \left[ \exp\left(25.00 [\lambda_j \lambda_k - 1]+ 16.70\right) - \exp(16.70) \right] - p [J-1]$
+     parameters: [3.3623e-12, 2.5000e+01, 1.6700e+01]
+
+[07] f(area) - #3 - incompressible
+     formula: $3.5368e+06 \sum_{j=2}^3 \sum_{k<j} \left[ \exp\left(0.10 [\lambda_j \lambda_k - 1] + -25.00\right) - \exp(-25.00) \right] - p [J-1]$
+     parameters: [3.5368e+06, 1.0000e-01, -2.5000e+01]
+
+[08] f(area) - #3 - incompressible
+     formula: $3.5369e+06 \sum_{j=2}^3 \sum_{k<j} \left[ \exp\left(0.10 [\lambda_j \lambda_k - 1] + -25.00\right) - \exp(-25.00) \right] - p [J-1]$
+     parameters: [3.5369e+06, 1.0000e-01, -2.5000e+01]
+
+[09] f(area) - #3 - incompressible
+     formula: $3.5370e+06 \sum_{j=2}^3 \sum_{k<j} \left[ \exp\left(0.10 [\lambda_j \lambda_k - 1] + -25.00\right) - \exp(-25.00) \right] - p [J-1]$
+     parameters: [3.5370e+06, 1.0000e-01, -2.5000e+01]
+
+[10] f(area) - #3 - incompressible
+     formula: $7.0743e+06 \sum_{j=2}^3 \sum_{k<j} \left[ \exp\left(0.10 [\lambda_j \lambda_k - 1] + -25.00\right) - \exp(-25.00) \right] - p [J-1]$
+     parameters: [7.0743e+06, 1.0000e-01, -2.5000e+01]
+
+------------------------------------------------------------
+R² results:
+uniaxial tension/compression :   0.9767
+--------------------------------------------------
+R² average                   :   0.9767
+PS C:\Users\abhis\OneDrive\Desktop\fit-proximal-green+intact\material-fingerprinting-adaptive>

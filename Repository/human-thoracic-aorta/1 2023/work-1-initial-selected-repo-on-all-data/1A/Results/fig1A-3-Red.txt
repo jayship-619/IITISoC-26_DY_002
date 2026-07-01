@@ -1,0 +1,27 @@
+python .script.py
+
+=== Material Fingerprinting ===
+Contact moritz.flaschel@fau.de for help and bug reports.
+
+The pickle database is loaded from the package resources.
+Database Information
+    models in the database 
+        Blatz-Ko - incompressible
+        Demiray - incompressible
+        Gent - incompressible
+        Holzapfel - incompressible
+        Mooney-Rivlin - incompressible
+        Neo-Hooke - incompressible
+        Ogden - incompressible
+    number of fingerprints = 2502
+    uniaxial tension stretch ranges from 0.1 to 10.0 in the database
+
+Material Fingerprinting Results
+    discovered model Demiray - incompressible
+    identified parameters [0.01381233 2.8       ]
+    formula $0.0138 left[exp(2.8000 [I_1 - 3]) - 1right] - p [J-1]$
+    R² values per experiment
+        uniaxial tensioncompression 0.9873
+    R² average over all experiments 0.9873
+('Demiray - incompressible', array([0.01381233, 2.8       ]), {'R2_per_experiment' {'uniaxial tensioncompression' np.float64(0.987301969553367)}, 'R2_average' np.float64(0.987301969553367)})
+PS CUsersabhisOneDriveDesktopNew folder 

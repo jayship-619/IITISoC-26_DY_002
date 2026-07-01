@@ -1,0 +1,27 @@
+python .\script.py
+
+=== Material Fingerprinting ===
+Contact moritz.flaschel@fau.de for help and bug reports.
+
+The pickle database is loaded from the package resources.
+Database Information:
+    models in the database: 
+        Blatz-Ko - incompressible
+        Demiray - incompressible
+        Gent - incompressible
+        Holzapfel - incompressible
+        Mooney-Rivlin - incompressible
+        Neo-Hooke - incompressible
+        Ogden - incompressible
+    number of fingerprints = 2502
+    uniaxial tension: stretch ranges from 0.1 to 10.0 in the database
+
+Material Fingerprinting Results:
+    discovered model: Holzapfel - incompressible
+    identified parameters: [0.58014629 0.3       ]
+    formula: $0.5801 \left[\exp(0.3000 [I_1 - 3]^2) - 1\right] - p [J-1]$
+    R² values per experiment:
+        uniaxial tension/compression: 0.9839
+    R² average over all experiments: 0.9839
+('Holzapfel - incompressible', array([0.58014629, 0.3       ]), {'R2_per_experiment': {'uniaxial tension/compression': np.float64(0.9838749203948719)}, 'R2_average': np.float64(0.9838749203948719)})
+PS C:\Users\abhis\OneDrive\Desktop\Fingerprinting> 
