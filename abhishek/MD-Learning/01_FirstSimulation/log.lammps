@@ -1,0 +1,49 @@
+LAMMPS (30 Mar 2026)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+Loaded 1 plugins from C:\Users\abhis\AppData\Local\LAMMPS 64-bit 30Mar2026\plugins
+units lj
+dimension 3
+boundary p p p
+atom_style atomic
+
+region box block 0 10 0 10 0 10
+create_box 1 box
+Created orthogonal box = (0 0 0) to (10 10 10)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 random 100 12345 box
+Created 100 atoms
+  using lattice units in orthogonal box = (0 0 0) to (10 10 10)
+  create_atoms CPU = 0.000 seconds
+mass 1 1.0
+
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+neighbor 0.3 bin
+neigh_modify every 1 delay 0 check yes
+
+velocity all create 1.0 87287
+fix 1 all nve
+
+timestep 0.005
+thermo 100
+run 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4, bins = 8 8 8
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 3.068 | 3.068 | 3.068 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   1              31917.757      0              31919.242      12776.208    
+ERROR: Lost atoms: original 100 current 90
+For more information see https://docs.lammps.org/err0008 (src/thermo.cpp:527)
