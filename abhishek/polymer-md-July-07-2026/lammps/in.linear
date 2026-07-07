@@ -1,0 +1,35 @@
+# -----------------------------
+# Polymer Chain Test
+# -----------------------------
+
+units lj
+
+dimension 3
+
+boundary p p p
+
+atom_style bond
+
+read_data ../data/chain.data
+
+pair_style lj/cut 1.12246
+
+pair_coeff 1 1 1.0 1.0 1.12246
+
+bond_style fene
+
+bond_coeff 1 30.0 1.5 1.0 1.0
+
+special_bonds fene
+
+neighbor 0.3 bin
+
+neigh_modify every 1 delay 0 check yes
+
+velocity all create 1.0 12345
+
+fix 1 all nve
+
+thermo 100
+
+run 1000

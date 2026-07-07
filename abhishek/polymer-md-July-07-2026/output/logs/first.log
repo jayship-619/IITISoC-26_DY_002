@@ -1,1 +1,3 @@
 ERROR on proc 0: Cannot open input script in.chain: No such file or directory (src/lammps.cpp:569)
+
+#this is because script did not contain the information about molecule

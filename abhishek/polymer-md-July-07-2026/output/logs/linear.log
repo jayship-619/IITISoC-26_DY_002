@@ -1,0 +1,122 @@
+LAMMPS (30 Mar 2026)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+Loaded 1 plugins from C:\Users\abhis\AppData\Local\LAMMPS 64-bit 30Mar2026\plugins
+# -----------------------------
+# Polymer Chain Test
+# -----------------------------
+
+units lj
+
+dimension 3
+
+boundary p p p
+
+atom_style bond
+
+read_data ../data/chain.data
+Reading data file ...
+  orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  5 atoms
+  scanning bonds ...
+  1 = max bonds/atom
+  orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+  reading bonds ...
+  4 bonds
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0       
+  special bond factors coul:  0        0        0       
+     2 = max # of 1-2 neighbors
+     2 = max # of 1-3 neighbors
+     2 = max # of 1-4 neighbors
+     4 = max # of special neighbors
+  special bonds CPU = 0.002 seconds
+  read_data CPU = 0.005 seconds
+
+pair_style lj/cut 1.12246
+
+pair_coeff 1 1 1.0 1.0 1.12246
+
+bond_style fene
+
+bond_coeff 1 30.0 1.5 1.0 1.0
+
+special_bonds fene
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        1        1       
+  special bond factors coul:  0        1        1       
+     2 = max # of 1-2 neighbors
+     4 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+
+neighbor 0.3 bin
+
+neigh_modify every 1 delay 0 check yes
+
+velocity all create 1.0 12345
+
+fix 1 all nve
+
+thermo 100
+
+run 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+WARNING: Communication cutoff 1.42246 is shorter than a bond length based estimate of 1.7550000000000001. This may lead to errors. (src/comm.cpp:694)
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 1.42246
+  ghost atom cutoff = 1.42246
+  binsize = 0.71123, bins = 29 29 29
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton
+      stencil: half/bin/3d
+      bin: standard
+WARNING: Communication cutoff 1.42246 is shorter than a bond length based estimate of 1.7550000000000001. This may lead to errors. (src/comm.cpp:694)
+Per MPI rank memory allocation (min/avg/max) = 4.398 | 4.398 | 4.398 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   1              0              16.67024       17.87024      -0.0045       
+       100   0.89303571    -0.17975137     16.779776      17.671668     -0.0037508167 
+       200   1.0422205      0              16.617994      17.868659      0.0014647991 
+       300   1.2394198      0              16.383251      17.870555      0.0019776378 
+       400   1.2517258      0              16.367588      17.869659     -0.0014568914 
+       500   1.2062366      0              16.421487      17.86897      -0.00041159819
+       600   0.90716259    -0.19910393     16.782139      17.67163      -0.0035832491 
+       700   1.085358       0              16.56888       17.87131      -0.0015027219 
+       800   1.2661356      0              16.346607      17.865969     -0.00096391126
+       900   1.0173392      0              16.645919      17.866726      0.000276632  
+      1000   1.0697804     -0.13634268     16.520972      17.668366      0.00020991369
+Loop time of 0.00159 on 1 procs for 1000 steps with 5 atoms
+
+Performance: 271698113.208 tau/day, 628930.818 timesteps/s, 3.145 Matom-step/s
+0.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 5.4e-05    | 5.4e-05    | 5.4e-05    |   0.0 |  3.40
+Bond    | 6.1e-05    | 6.1e-05    | 6.1e-05    |   0.0 |  3.84
+Neigh   | 0.000457   | 0.000457   | 0.000457   |   0.0 | 28.74
+Comm    | 9.6e-05    | 9.6e-05    | 9.6e-05    |   0.0 |  6.04
+Output  | 0.000295   | 0.000295   | 0.000295   |   0.0 | 18.55
+Modify  | 0.000103   | 0.000103   | 0.000103   |   0.0 |  6.48
+Other   |            | 0.000524   |            |       | 32.96
+
+Nlocal:              5 ave           5 max           5 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              1 ave           1 max           1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.2
+Ave special neighs/atom = 1.6
+Neighbor list builds = 67
+Dangerous builds = 0
+Total wall time: 0:00:00
