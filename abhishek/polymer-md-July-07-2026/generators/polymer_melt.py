@@ -102,6 +102,90 @@ def translate_atoms(
 # Renumber Atoms
 # ==============================================================
 
+# ==============================================================
+# Random Chain Origin
+# ==============================================================
+
+def generate_random_origin():
+    """
+    Generate a random starting position for a polymer chain
+    inside the simulation box.
+    """
+
+    MARGIN = 10.0
+
+    x = random.uniform(
+        MARGIN,
+        BOX_SIZE - MARGIN
+    )
+
+    y = random.uniform(
+        MARGIN,
+        BOX_SIZE - MARGIN
+    )
+
+    z = random.uniform(
+        MARGIN,
+        BOX_SIZE - MARGIN
+    )
+
+    return (
+        x,
+        y,
+        z
+    )
+
+# ==============================================================
+# Inter-Chain Overlap Check
+# ==============================================================
+
+def chain_overlaps(
+    candidate_atoms,
+    accepted_atoms
+):
+    """
+    Check whether a newly generated chain overlaps
+    any previously accepted chain.
+
+    Parameters
+    ----------
+    candidate_atoms : list
+        Newly generated polymer chain.
+
+    accepted_atoms : list
+        Atoms already accepted into the polymer melt.
+
+    Returns
+    -------
+    bool
+        True  -> Overlap exists.
+        False -> No overlap.
+    """
+
+    for candidate in candidate_atoms:
+
+        _, _, _, x1, y1, z1 = candidate
+
+        for accepted in accepted_atoms:
+
+            _, _, _, x2, y2, z2 = accepted
+
+            dx = x1 - x2
+            dy = y1 - y2
+            dz = z1 - z2
+
+            distance = (
+                dx**2 +
+                dy**2 +
+                dz**2
+            ) ** 0.5
+
+            if distance < MIN_CHAIN_DISTANCE:
+
+                return True
+
+    return False
+
 def renumber_atoms(
     atoms,
     atom_offset,
@@ -186,9 +270,9 @@ def main():
         # Generate one SAW chain
         # ----------------------------------------------
         atoms = generate_self_avoiding_walk(
-        CHAIN_LENGTH,
-        BOND_LENGTH,
-        START_POSITION
+            CHAIN_LENGTH,
+            BOND_LENGTH,
+            START_POSITION
         )
         # ----------------------------------------------
         # Try random positions until the chain fits
@@ -206,14 +290,14 @@ def main():
             dz = origin[2] - START_POSITION[2]
 
             translated_atoms = translate_atoms(
-            atoms,
-            dx,
-            dy,
-            dz
+                atoms,
+                dx,
+                dy,
+                dz
             )
             has_overlap = chain_overlaps(
-            translated_atoms,
-            all_atoms
+                translated_atoms,
+                all_atoms
             )
 
             if not has_overlap:
@@ -227,9 +311,9 @@ def main():
 
         if not placed:
 
-                raise RuntimeError(
-                f"Unable to place chain {chain+1}"
-                )
+            raise RuntimeError(
+            f"Unable to place chain {chain+1}"
+            )
 
             # ----------------------------------------------
             # Renumber atoms
@@ -237,9 +321,9 @@ def main():
             
         # Give this chain unique atom IDs and molecule ID
         atoms = renumber_atoms(
-        atoms,
-        atom_offset,
-        chain + 1
+            atoms,
+            atom_offset,
+            chain + 1
         )       
         
         # ----------------------------------------------
@@ -248,7 +332,7 @@ def main():
 
         # Generate bonds
         bonds = generate_bonds(
-         CHAIN_LENGTH
+            CHAIN_LENGTH
         )
 
         # Give bonds unique IDs
