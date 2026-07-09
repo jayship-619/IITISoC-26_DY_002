@@ -42,7 +42,7 @@ from utils import (
 # User Parameters
 # ==============================================================
 
-NUMBER_OF_CHAINS = 2
+NUMBER_OF_CHAINS = 10
 
 CHAIN_LENGTH = 20
 
@@ -266,6 +266,8 @@ def main():
     # ----------------------------------------------------------
 
     for chain in range(NUMBER_OF_CHAINS):
+
+        print(f"\nGenerating Chain {chain+1}")
     
         # ----------------------------------------------
         # Generate one SAW chain
@@ -302,8 +304,20 @@ def main():
             )
 
             if not has_overlap:
+        
                 atoms = translated_atoms
+        
                 placed = True
+
+                print("Chain accepted")
+        
+                placement_attempts = attempt + 1
+        
+                print(
+                    f"Chain {chain + 1} placed after "
+                    f"{placement_attempts} attempt(s)."
+                )
+        
                 break
         
         # ----------------------------------------------
@@ -348,6 +362,7 @@ def main():
         # ----------------------------------------------
 
         all_atoms.extend(atoms)
+        print("Current atoms:", len(all_atoms))
         all_bonds.extend(bonds)
 
         atom_offset += CHAIN_LENGTH
@@ -356,7 +371,8 @@ def main():
     # ----------------------------------------------------------
     # Export LAMMPS data
     # ----------------------------------------------------------
-
+        print(len(all_atoms))
+        print(len(all_bonds))
     # Export to LAMMPS
     write_lammps_data(
         OUTPUT_FILE,
