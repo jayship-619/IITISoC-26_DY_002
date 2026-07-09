@@ -94,8 +94,9 @@ def translate_atoms(
                 atom_type,
                 x + dx,
                 y + dy,
-                z + dz) )
-        return translated
+                z + dz) 
+                        )
+    return translated
 #-----------------------
 # ==============================================================
 # Renumber Atoms
@@ -184,88 +185,88 @@ def main():
         # ----------------------------------------------
         # Generate one SAW chain
         # ----------------------------------------------
-            atoms = generate_self_avoiding_walk(
-            CHAIN_LENGTH,
-            BOND_LENGTH,
-            START_POSITION
+        atoms = generate_self_avoiding_walk(
+        CHAIN_LENGTH,
+        BOND_LENGTH,
+        START_POSITION
         )
         # ----------------------------------------------
         # Try random positions until the chain fits
         # ----------------------------------------------
-            placed = False
+        placed = False
 
-            for attempt in range(MAX_PLACEMENT_TRIES):
+        for attempt in range(MAX_PLACEMENT_TRIES):
 
-                origin = generate_random_origin()
+            origin = generate_random_origin()
 
-                dx = origin[0] - START_POSITION[0]
+            dx = origin[0] - START_POSITION[0]
 
-                dy = origin[1] - START_POSITION[1]
+            dy = origin[1] - START_POSITION[1]
 
-                dz = origin[2] - START_POSITION[2]
+            dz = origin[2] - START_POSITION[2]
 
-                translated_atoms = translate_atoms(
-                atoms,
-                dx,
-                dy,
-                dz
-                )
-                has_overlap = chain_overlaps(
-                translated_atoms,
-                all_atoms
-                )
+            translated_atoms = translate_atoms(
+            atoms,
+            dx,
+            dy,
+            dz
+            )
+            has_overlap = chain_overlaps(
+            translated_atoms,
+            all_atoms
+            )
 
-                if not has_overlap:
-                    atoms = translated_atoms
-                    placed = True
+            if not has_overlap:
+                atoms = translated_atoms
+                placed = True
                 break
         
         # ----------------------------------------------
         # Stop if no valid position was found
         # ----------------------------------------------
 
-            if not placed:
+        if not placed:
 
                 raise RuntimeError(
                 f"Unable to place chain {chain+1}"
-            )
+                )
 
-                # ----------------------------------------------
-                # Renumber atoms
-                # ----------------------------------------------
-
-                # Give this chain unique atom IDs and molecule ID
-                atoms = renumber_atoms(
-                    atoms,
-                    atom_offset,
-                    chain + 1
-                )       
+            # ----------------------------------------------
+            # Renumber atoms
+            # ----------------------------------------------
+            
+        # Give this chain unique atom IDs and molecule ID
+        atoms = renumber_atoms(
+        atoms,
+        atom_offset,
+        chain + 1
+        )       
         
-                # ----------------------------------------------
-                # Generate and renumber bonds
-                # ----------------------------------------------
+        # ----------------------------------------------
+        # Generate and renumber bonds
+        # ----------------------------------------------
 
-                # Generate bonds
-                bonds = generate_bonds(
-                 CHAIN_LENGTH
-                )
+        # Generate bonds
+        bonds = generate_bonds(
+         CHAIN_LENGTH
+        )
 
-                # Give bonds unique IDs
-                bonds = renumber_bonds(
-                    bonds,
-                    bond_offset,
-                    atom_offset
-                )
+        # Give bonds unique IDs
+        bonds = renumber_bonds(
+            bonds,
+            bond_offset,
+            atom_offset
+        )
 
-                # ----------------------------------------------
-                # Store chain
-                # ----------------------------------------------
+        # ----------------------------------------------
+        # Store chain
+        # ----------------------------------------------
 
-                all_atoms.extend(atoms)
-                all_bonds.extend(bonds)
+        all_atoms.extend(atoms)
+        all_bonds.extend(bonds)
 
-                atom_offset += CHAIN_LENGTH
-                bond_offset += (CHAIN_LENGTH - 1)
+        atom_offset += CHAIN_LENGTH
+        bond_offset += (CHAIN_LENGTH - 1)
 
     # ----------------------------------------------------------
     # Export LAMMPS data
