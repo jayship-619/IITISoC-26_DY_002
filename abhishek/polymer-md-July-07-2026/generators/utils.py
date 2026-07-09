@@ -94,7 +94,7 @@ def generate_bonds(chain_length):
 
     return bonds
 #-------------------------------------------------------------------
-def write_lammps_data(filename, atoms, bonds, box_size=(20,20,20)):
+def write_lammps_data(filename, atoms, bonds, box_size=(60,60,60)):
     """
     Write a simple LAMMPS data file.
 

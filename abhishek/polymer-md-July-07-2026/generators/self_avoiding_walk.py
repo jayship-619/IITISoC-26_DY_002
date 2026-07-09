@@ -16,9 +16,9 @@ Each new bead:
 2. Cannot overlap any previously placed bead.
 3. Is rejected if it violates the minimum allowed distance.
 
-Output:
---------
-A list of atom tuples that can be exported to a LAMMPS data file.
+Output
+------
+Creates a LAMMPS data file that can be simulated directly.
 
 ====================================================================
 """
@@ -52,33 +52,53 @@ RANDOM_SEED = 42
 
 MAX_TRIES = 100
 
+OUTPUT_FILE = "../data/self_avoiding_walk.data"
+
 # ==================================================================
 # Collision Detection
 # ==================================================================
 
-def is_valid_position(candidate_position, atoms,ignore_last=True):
-    if ignore_last and len(atoms) > 0:
-        atoms_to_check = atoms[:-1]
-    else:
-        atoms_to_check = atoms
+def is_valid_position(
+    candidate_position,
+    atoms,
+    ignore_last=True
+):
     """
-    Check whether the candidate bead overlaps
-    any previously placed bead.
+    Check whether a candidate bead overlaps an
+    already existing bead.
 
     Parameters
     ----------
     candidate_position : tuple
-        (x, y, z) coordinates of proposed bead.
+        Proposed (x, y, z) coordinates.
 
     atoms : list
-        Existing atom list.
+        Existing atoms.
+
+    ignore_last : bool
+        Ignore the most recently placed bead.
+        This bead is bonded to the new bead and
+        therefore should not be treated as a collision.
 
     Returns
     -------
     bool
-        True  -> Position is acceptable.
-        False -> Position overlaps an existing bead.
+        True  -> Position is valid.
+        False -> Position overlaps another bead.
     """
+
+    # --------------------------------------------------------------
+    # Determine which atoms should be checked.
+    # --------------------------------------------------------------
+
+    if ignore_last and len(atoms) > 0:
+        atoms_to_check = atoms[:-1]
+    else:
+        atoms_to_check = atoms
+
+    # --------------------------------------------------------------
+    # Compare candidate against every existing bead.
+    # --------------------------------------------------------------
 
     for atom in atoms_to_check:
 
@@ -87,7 +107,6 @@ def is_valid_position(candidate_position, atoms,ignore_last=True):
         existing_position = (x, y, z)
 
         if distance(candidate_position, existing_position) < MIN_DISTANCE:
-
             return False
 
     return True
@@ -103,9 +122,13 @@ def generate_self_avoiding_walk(
     start_position
 ):
     """
-    Generate a polymer chain using
-    the Self Avoiding Walk algorithm.
+    Generate a polymer chain using the
+    Self-Avoiding Walk algorithm.
     """
+
+    # --------------------------------------------------------------
+    # Initialize random number generator
+    # --------------------------------------------------------------
 
     random.seed(RANDOM_SEED)
 
@@ -117,7 +140,7 @@ def generate_self_avoiding_walk(
     atom_type = 1
 
     # --------------------------------------------------------------
-    # Place First Bead
+    # Place first bead
     # --------------------------------------------------------------
 
     atoms.append(
@@ -132,19 +155,21 @@ def generate_self_avoiding_walk(
     )
 
     # --------------------------------------------------------------
-    # Place Remaining Beads
+    # Generate remaining beads
     # --------------------------------------------------------------
 
     for atom_id in range(2, chain_length + 1):
 
         placed = False
 
-        # Try different directions until
+        # ----------------------------------------------------------
+        # Try multiple random directions until
         # a valid position is found.
+        # ----------------------------------------------------------
 
-        for attempt in range(MAX_TRIES):
+        for _ in range(MAX_TRIES):
 
-            # Generate a random direction.
+            # Generate random unit vector.
 
             dx, dy, dz = random_unit_vector()
 
@@ -156,12 +181,10 @@ def generate_self_avoiding_walk(
                 z + dz * bond_length
             )
 
-            # Check whether candidate overlaps
+            # Accept only if it does not overlap
             # an existing bead.
 
             if is_valid_position(candidate, atoms):
-
-                # Accept candidate.
 
                 x, y, z = candidate
 
@@ -180,8 +203,9 @@ def generate_self_avoiding_walk(
 
                 break
 
-        # If no valid position was found,
-        # terminate with an informative error.
+        # ----------------------------------------------------------
+        # Stop if no valid position can be found.
+        # ----------------------------------------------------------
 
         if not placed:
 
@@ -199,9 +223,9 @@ def generate_self_avoiding_walk(
 
 def main():
     """
-    Generate polymer chain,
-    create bonds,
-    and export to LAMMPS.
+    Generate polymer,
+    generate bonds,
+    write LAMMPS data file.
     """
 
     atoms = generate_self_avoiding_walk(
@@ -215,12 +239,18 @@ def main():
     )
 
     write_lammps_data(
-        "../data/self_avoiding_walk.data",
+        OUTPUT_FILE,
         atoms,
         bonds
     )
 
-    print("\nSelf-Avoiding Walk generated successfully.")
+    print("\n======================================")
+    print(" Self-Avoiding Walk Generated")
+    print("======================================")
+    print(f"Atoms : {len(atoms)}")
+    print(f"Bonds : {len(bonds)}")
+    print(f"Output: {OUTPUT_FILE}")
+    print("======================================\n")
 
 
 # ==================================================================

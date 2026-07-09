@@ -15,7 +15,7 @@ atom_style      bond
 # Read Polymer
 # ----------------------------------------------------------
 
-read_data       ../data/self_avoiding_walk.data
+read_data       ../data/polymer_melt.data
 
 # ----------------------------------------------------------
 # Force Field
