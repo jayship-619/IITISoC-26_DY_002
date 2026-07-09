@@ -42,7 +42,7 @@ from utils import (
 # User Parameters
 # ==============================================================
 
-NUMBER_OF_CHAINS = 10
+NUMBER_OF_CHAINS = 25
 
 CHAIN_LENGTH = 20
 
@@ -371,8 +371,7 @@ def main():
     # ----------------------------------------------------------
     # Export LAMMPS data
     # ----------------------------------------------------------
-        print(len(all_atoms))
-        print(len(all_bonds))
+
     # Export to LAMMPS
     write_lammps_data(
         OUTPUT_FILE,
