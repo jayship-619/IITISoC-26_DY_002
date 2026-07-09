@@ -94,7 +94,7 @@ def generate_bonds(chain_length):
 
     return bonds
 #-------------------------------------------------------------------
-def write_lammps_data(filename, atoms, bonds, box_size=(60,60,60)):
+def write_lammps_data(filename, atoms, bonds, box_size):
     """
     Write a simple LAMMPS data file.
 
@@ -111,6 +111,11 @@ def write_lammps_data(filename, atoms, bonds, box_size=(60,60,60)):
     """
 
     with open(filename, "w") as f:
+        # -------------------------
+        # Simulation Box
+        # -------------------------
+
+        xhi, yhi, zhi = box_size
 
         # -------------------------
         # Header
@@ -124,9 +129,9 @@ def write_lammps_data(filename, atoms, bonds, box_size=(60,60,60)):
         f.write("1 atom types\n")
         f.write("1 bond types\n\n")
 
-        f.write("0.0 20.0 xlo xhi\n")
-        f.write("0.0 20.0 ylo yhi\n")
-        f.write("0.0 20.0 zlo zhi\n\n")
+        f.write(f"0.0 {xhi:.3f} xlo xhi\n")
+        f.write(f"0.0 {yhi:.3f} ylo yhi\n")
+        f.write(f"0.0 {zhi:.3f} zlo zhi\n\n")
 
         # -------------------------
         # Masses

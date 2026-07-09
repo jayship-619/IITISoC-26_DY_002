@@ -130,7 +130,6 @@ def generate_self_avoiding_walk(
     # Initialize random number generator
     # --------------------------------------------------------------
 
-    random.seed(RANDOM_SEED)
 
     atoms = []
 

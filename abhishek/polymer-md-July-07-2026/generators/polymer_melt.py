@@ -54,9 +54,9 @@ START_POSITION = (10.0, 10.0, 10.0)
 # Simulation Box
 # ==============================================================
 
-BOX_SIZE = 60.0
+BOX_SIZE = 60
 
-MIN_CHAIN_DISTANCE = 8.0
+
 
 RANDOM_SEED = 42
 
@@ -103,11 +103,11 @@ def generate_random_origin():
     Generate a random chain origin inside the simulation box.
     """
 
-    x = random.uniform(0.0, BOX_SIZE)
+    MARGIN = 10.0
 
-    y = random.uniform(0.0, BOX_SIZE)
-
-    z = random.uniform(0.0, BOX_SIZE)
+    x = random.uniform(MARGIN, BOX_SIZE - MARGIN)
+    y = random.uniform(MARGIN, BOX_SIZE - MARGIN)
+    z = random.uniform(MARGIN, BOX_SIZE - MARGIN)
 
     return (
         x,
@@ -203,7 +203,7 @@ def main():
             START_POSITION
         )
 
-        # # Translate chain to a random position
+        # # Generate a random position and translate the chain
         origin = generate_random_origin()
 
         dx = origin[0] - START_POSITION[0]
@@ -212,12 +212,22 @@ def main():
 
         dz = origin[2] - START_POSITION[2]
 
+        print(f"\nChain {chain+1}")
+
+        print("Origin:", origin)
+
+        print("dx =", dx)
+
+        print("First atom BEFORE:", atoms[0])
+
         atoms = translate_atoms(
-        atoms,
-        dx,
-        dy,
-        dz
-        )
+            atoms,
+            dx,
+            dy,
+            dz
+            )
+
+        print("First atom AFTER :", atoms[0])
 
         # Give this chain unique atom IDs and molecule ID
         atoms = renumber_atoms(
@@ -249,9 +259,7 @@ def main():
         OUTPUT_FILE,
         all_atoms,
         all_bonds,
-        box_size ,
-        box_size ,
-        box_size 
+        (BOX_SIZE, BOX_SIZE, BOX_SIZE) 
         )   
 
     print("\n======================================")
@@ -270,36 +278,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-    random.seed()
-
-    all_atoms = []
-    all_bonds = []
-
-    atom_offset = 0
-    bond_offset = 0
-
-    for each chain
-
-        generate chain
-
-        random origin
-
-        translate chain
-
-        renumber atoms
-
-        generate bonds
-
-        renumber bonds
-
-        append atoms
-
-        append bonds
-
-        update offsets
-
-    export LAMMPS data
-
-    print summary
+    
 
     
