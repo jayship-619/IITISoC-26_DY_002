@@ -55,7 +55,13 @@ START_POSITION = (10.0, 10.0, 10.0)
 # ==============================================================
 
 BOX_SIZE = 60
+# ==============================================================
+# Packing Parameters
+# ==============================================================
 
+MIN_CHAIN_DISTANCE = 1.0
+
+MAX_PLACEMENT_TRIES = 500
 
 
 RANDOM_SEED = 42
@@ -70,7 +76,7 @@ def translate_atoms(
     dx,
     dy,
     dz
-):
+    ):
     """
     Translate every atom by a fixed displacement.
     """
@@ -88,33 +94,8 @@ def translate_atoms(
                 atom_type,
                 x + dx,
                 y + dy,
-                z + dz
-            )
-        )
-
-    return translated
-
-# ==============================================================
-# Random Chain Origin
-# ==============================================================
-
-def generate_random_origin():
-    """
-    Generate a random chain origin inside the simulation box.
-    """
-
-    MARGIN = 10.0
-
-    x = random.uniform(MARGIN, BOX_SIZE - MARGIN)
-    y = random.uniform(MARGIN, BOX_SIZE - MARGIN)
-    z = random.uniform(MARGIN, BOX_SIZE - MARGIN)
-
-    return (
-        x,
-        y,
-        z
-    )
-
+                z + dz) )
+        return translated
 #-----------------------
 # ==============================================================
 # Renumber Atoms
@@ -194,65 +175,101 @@ def main():
 
     bond_offset = 0
 
-    for chain in range(NUMBER_OF_CHAINS):
+    # ----------------------------------------------------------
+    # Generate multiple polymer chains
+    # ----------------------------------------------------------
 
-        # Generate one polymer chain
-        atoms = generate_self_avoiding_walk(
+    for chain in range(NUMBER_OF_CHAINS):
+    
+        # ----------------------------------------------
+        # Generate one SAW chain
+        # ----------------------------------------------
+            atoms = generate_self_avoiding_walk(
             CHAIN_LENGTH,
             BOND_LENGTH,
             START_POSITION
         )
+        # ----------------------------------------------
+        # Try random positions until the chain fits
+        # ----------------------------------------------
+            placed = False
 
-        # # Generate a random position and translate the chain
-        origin = generate_random_origin()
+            for attempt in range(MAX_PLACEMENT_TRIES):
 
-        dx = origin[0] - START_POSITION[0]
+                origin = generate_random_origin()
 
-        dy = origin[1] - START_POSITION[1]
+                dx = origin[0] - START_POSITION[0]
 
-        dz = origin[2] - START_POSITION[2]
+                dy = origin[1] - START_POSITION[1]
 
-        print(f"\nChain {chain+1}")
+                dz = origin[2] - START_POSITION[2]
 
-        print("Origin:", origin)
+                translated_atoms = translate_atoms(
+                atoms,
+                dx,
+                dy,
+                dz
+                )
+                has_overlap = chain_overlaps(
+                translated_atoms,
+                all_atoms
+                )
 
-        print("dx =", dx)
+                if not has_overlap:
+                    atoms = translated_atoms
+                    placed = True
+                break
+        
+        # ----------------------------------------------
+        # Stop if no valid position was found
+        # ----------------------------------------------
 
-        print("First atom BEFORE:", atoms[0])
+            if not placed:
 
-        atoms = translate_atoms(
-            atoms,
-            dx,
-            dy,
-            dz
+                raise RuntimeError(
+                f"Unable to place chain {chain+1}"
             )
 
-        print("First atom AFTER :", atoms[0])
+                # ----------------------------------------------
+                # Renumber atoms
+                # ----------------------------------------------
 
-        # Give this chain unique atom IDs and molecule ID
-        atoms = renumber_atoms(
-            atoms,
-            atom_offset,
-            chain + 1
-        )
+                # Give this chain unique atom IDs and molecule ID
+                atoms = renumber_atoms(
+                    atoms,
+                    atom_offset,
+                    chain + 1
+                )       
+        
+                # ----------------------------------------------
+                # Generate and renumber bonds
+                # ----------------------------------------------
 
-        # Generate bonds
-        bonds = generate_bonds(
-            CHAIN_LENGTH
-        )
+                # Generate bonds
+                bonds = generate_bonds(
+                 CHAIN_LENGTH
+                )
 
-        # Give bonds unique IDs
-        bonds = renumber_bonds(
-            bonds,
-            bond_offset,
-            atom_offset
-        )
+                # Give bonds unique IDs
+                bonds = renumber_bonds(
+                    bonds,
+                    bond_offset,
+                    atom_offset
+                )
 
-        all_atoms.extend(atoms)
-        all_bonds.extend(bonds)
+                # ----------------------------------------------
+                # Store chain
+                # ----------------------------------------------
 
-        atom_offset += CHAIN_LENGTH
-        bond_offset += (CHAIN_LENGTH - 1)
+                all_atoms.extend(atoms)
+                all_bonds.extend(bonds)
+
+                atom_offset += CHAIN_LENGTH
+                bond_offset += (CHAIN_LENGTH - 1)
+
+    # ----------------------------------------------------------
+    # Export LAMMPS data
+    # ----------------------------------------------------------
 
     # Export to LAMMPS
     write_lammps_data(
