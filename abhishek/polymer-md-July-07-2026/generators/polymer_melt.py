@@ -94,8 +94,9 @@ def translate_atoms(
                 atom_type,
                 x + dx,
                 y + dy,
-                z + dz) 
-                        )
+                z + dz
+            ) 
+        )
     return translated
 #-----------------------
 # ==============================================================
@@ -312,12 +313,12 @@ def main():
         if not placed:
 
             raise RuntimeError(
-            f"Unable to place chain {chain+1}"
+                f"Unable to place chain {chain+1}"
             )
 
-            # ----------------------------------------------
-            # Renumber atoms
-            # ----------------------------------------------
+        # ----------------------------------------------
+        # Renumber atoms
+        # ----------------------------------------------
             
         # Give this chain unique atom IDs and molecule ID
         atoms = renumber_atoms(
