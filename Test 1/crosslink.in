@@ -1,0 +1,185 @@
+#==============================================================
+# 03_crosslink.in
+#
+# Dynamic Crosslinking of Polymer Melt
+#
+# LAMMPS 4 Jul 2026
+#
+# Input:
+#     melt_equilibrated.data
+#
+# Output:
+#     crosslinked_gel.data
+#     crosslinked_gel.restart
+#     gelation.lammpstrj
+#
+#==============================================================
+
+clear
+
+###############################################################
+# INITIALIZATION
+###############################################################
+
+units           lj
+dimension       3
+boundary        p p p
+atom_style      bond
+
+include         parameters.in
+
+###############################################################
+# FORCE FIELD
+###############################################################
+
+bond_style      fene
+
+# Must be >= reaction cutoff
+pair_style      lj/cut 1.5
+
+###############################################################
+# READ MELT
+###############################################################
+
+read_data melt_equilibrated.data &
+extra/bond/per/atom 1 &
+extra/special/per/atom 20
+
+###############################################################
+# FORCE FIELD PARAMETERS
+###############################################################
+
+bond_coeff      1 ${K} ${R0} ${epsilon} ${sigma}
+
+# Crosslinks use the same FENE parameters
+bond_coeff      2 ${K} ${R0} ${epsilon} ${sigma}
+
+pair_coeff      * * ${epsilon} ${sigma} 1.5
+
+special_bonds   fene
+
+neighbor        ${skin} bin
+neigh_modify    delay 0 every 1 check yes
+
+comm_modify cutoff 2.5
+
+###############################################################
+# INITIAL VELOCITIES
+###############################################################
+
+velocity all create ${T} ${seed} mom yes rot yes dist gaussian
+
+###############################################################
+# THERMODYNAMIC OUTPUT
+###############################################################
+
+thermo          1000
+
+thermo_style custom step temp press pe density
+
+###############################################################
+# PRE-REACTION RELAXATION
+###############################################################
+
+fix NVT all nvt temp ${T} ${T} ${Tdamp}
+
+print " "
+print "========================================="
+print "Stage 1 : Pre-Reaction Equilibration"
+print "========================================="
+
+run 10000
+
+###############################################################
+# DEFINE REACTIVE SITES
+###############################################################
+
+group reactive type 2
+
+###############################################################
+# CROSSLINKING
+###############################################################
+
+print " "
+print "========================================="
+print "Stage 2 : Dynamic Crosslinking"
+print "========================================="
+
+fix XLINK all bond/create 100 2 2 1.30 2 &
+iparam 1 1 &
+jparam 1 1 &
+prob 0.20 12345 &
+molecule inter
+
+###############################################################
+# MONITOR CROSSLINK FORMATION
+###############################################################
+
+variable newbonds equal f_XLINK[1]
+variable totalbonds equal f_XLINK[2]
+
+thermo_style custom step temp press v_newbonds v_totalbonds
+
+###############################################################
+# TRAJECTORY
+###############################################################
+
+dump GEL all custom 1000 gelation.lammpstrj &
+id mol type x y z
+
+###############################################################
+# RUN REACTION
+###############################################################
+
+run 100000
+
+###############################################################
+# STOP REACTION
+###############################################################
+
+unfix XLINK
+
+undump GEL
+
+###############################################################
+# RELAX CROSSLINKED NETWORK
+###############################################################
+
+print " "
+print "========================================="
+print "Stage 3 : Relax Crosslinked Gel"
+print "========================================="
+
+thermo_style custom step temp press pe density
+
+min_style cg
+
+minimize 1.0e-6 1.0e-8 10000 100000
+
+run 30000
+
+###############################################################
+# CLEANUP
+###############################################################
+
+unfix NVT
+
+###############################################################
+# SAVE GEL
+###############################################################
+
+write_data crosslinked_gel.data
+
+write_restart crosslinked_gel.restart
+
+###############################################################
+# FINISHED
+###############################################################
+
+print " "
+print "========================================="
+print "Crosslinking Complete"
+print "========================================="
+print "Output : crosslinked_gel.data"
+print "Restart: crosslinked_gel.restart"
+print "========================================="

@@ -1,0 +1,13 @@
+variable T equal 1.0
+variable Tdamp equal 1.0
+variable timestep equal 0.005
+
+variable epsilon equal 1.0
+variable sigma equal 1.0
+
+variable K equal 30.0
+variable R0 equal 1.5
+
+variable skin equal 0.4
+variable seed equal 12345
+variable strainrate equal 0.001

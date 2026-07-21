@@ -1,0 +1,96 @@
+# ============================================================
+# 05_tensile_test.in (Noise-Filtered & Volume Conserved)
+# ============================================================
+clear
+
+units           lj
+dimension       3
+boundary        p p p
+atom_style      bond
+
+include         parameters.in
+
+# ------------------------------------------------------------
+# Force Field & Data Loading
+# ------------------------------------------------------------
+bond_style      fene
+pair_style      lj/cut 1.5
+
+read_data       relaxed_gel.data
+
+bond_coeff      1 ${K} ${R0} ${epsilon} ${sigma}
+bond_coeff      2 ${K} ${R0} ${epsilon} ${sigma}
+pair_coeff      * * ${epsilon} ${sigma} 1.5
+special_bonds   fene
+
+neighbor        ${skin} bin
+neigh_modify    delay 0 every 1 check yes
+comm_modify     cutoff 2.5
+
+# ------------------------------------------------------------
+# Short Equilibration
+# ------------------------------------------------------------
+fix             EQ all nvt temp ${T} ${T} ${Tdamp}
+run             10000
+unfix           EQ
+
+# ------------------------------------------------------------
+# Define Constants & Strain Rate
+# ------------------------------------------------------------
+# The $() syntax forces LAMMPS to evaluate and lock the initial length
+variable        L0 equal $(lx)
+variable        strainrate equal 0.001
+
+# ------------------------------------------------------------
+# Clean the Pressure Signal (Time-Averaging)
+# ------------------------------------------------------------
+compute         P all pressure thermo_temp
+
+# Sample pressure every 10 steps, average 100 samples, output every 1000 steps
+fix             P_ave all ave/time 10 100 1000 c_P[1] c_P[2] c_P[3]
+
+# ------------------------------------------------------------
+# Stress & Stretch Variables
+# ------------------------------------------------------------
+variable        Stretch equal lx/v_L0
+
+# True Stress isolates the pulling force by subtracting transverse pressures
+variable        TrueStress equal "-(f_P_ave[1] - 0.5*(f_P_ave[2] + f_P_ave[3]))"
+variable        NominalStress equal v_TrueStress/v_Stretch
+
+# ------------------------------------------------------------
+# Output (Must match the 1000-step averaging interval)
+# ------------------------------------------------------------
+fix             OUT all print 1000 "${Stretch} ${NominalStress} ${TrueStress}" file stress_stretch.txt screen no title "Stretch NominalStress TrueStress"
+
+dump            TRAJ all custom 1000 tensile.lammpstrj id type mol x y z
+
+# ------------------------------------------------------------
+# Tensile Loading (Volume Conserved)
+# ------------------------------------------------------------
+fix             NVT all nvt temp ${T} ${T} ${Tdamp}
+
+# Incompressible deformation: Y and Z shrink naturally as X expands
+fix             DEF all deform 1 x erate ${strainrate} y volume z volume remap x
+
+thermo          1000
+thermo_style    custom step temp v_Stretch v_NominalStress f_P_ave[1] lx ly lz
+
+run             100000
+
+# ------------------------------------------------------------
+# Cleanup & Save
+# ------------------------------------------------------------
+# Reset the thermo style so LAMMPS stops looking for P_ave
+thermo_style    custom step temp press
+
+unfix           DEF
+unfix           NVT
+unfix           OUT
+unfix           P_ave
+undump          TRAJ
+
+write_data      stretched_gel.data
+write_restart   stretched_gel.restart
+
+print "================

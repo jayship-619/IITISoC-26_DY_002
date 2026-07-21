@@ -1,0 +1,157 @@
+#=============================================================
+# 02_relax_melt.in
+#
+# Relax the initial polymer melt
+#
+# Input:
+#   linear_melt.data
+#
+# Output:
+#   melt_equilibrated.data
+#
+#=============================================================
+
+clear
+
+# ------------------------------------------------------------
+# INITIALIZATION
+# ------------------------------------------------------------
+
+units           lj
+dimension       3
+boundary        p p p
+atom_style      bond
+
+include         parameters.in
+
+# ------------------------------------------------------------
+# READ INITIAL MELT
+# ------------------------------------------------------------
+
+read_data       linear_melt.data
+
+# ------------------------------------------------------------
+# FORCE FIELD
+# ------------------------------------------------------------
+
+bond_style fene
+
+# Backbone bonds
+bond_coeff 1 ${K} ${R0} ${epsilon} ${sigma}
+
+# Reserved for future crosslinks
+bond_coeff 2 ${K} ${R0} ${epsilon} ${sigma}
+special_bonds   fene
+
+pair_style      lj/cut 1.122462048
+
+pair_coeff      * * ${epsilon} ${sigma} 1.122462048
+
+neighbor        ${skin} bin
+
+neigh_modify    delay 0 every 1 check yes
+
+# ------------------------------------------------------------
+# INITIAL VELOCITIES
+# ------------------------------------------------------------
+
+velocity all create ${T} ${seed} mom yes rot yes dist gaussian
+
+# ------------------------------------------------------------
+# THERMODYNAMIC OUTPUT
+# ------------------------------------------------------------
+
+thermo          1000
+
+thermo_style custom step temp pe ke etotal press density lx ly lz
+
+# ------------------------------------------------------------
+# STAGE 1
+# ENERGY MINIMIZATION
+# ------------------------------------------------------------
+
+print " "
+print "=============================================="
+print "Stage 1 : Energy Minimization"
+print "=============================================="
+
+min_style cg
+
+minimize 1.0e-6 1.0e-8 10000 100000
+
+# ------------------------------------------------------------
+# STAGE 2
+# VERY GENTLE RELAXATION
+# ------------------------------------------------------------
+
+print " "
+print "=============================================="
+print "Stage 2 : NVE/LIMIT + Langevin"
+print "=============================================="
+
+reset_timestep 0
+
+timestep ${timestep}
+
+fix INT all nve/limit 0.02
+
+fix LANG all langevin ${T} ${T} ${Tdamp} ${seed}
+
+run 20000
+
+unfix INT
+
+# ------------------------------------------------------------
+# STAGE 3
+# CONTINUE RELAXATION
+# ------------------------------------------------------------
+
+print " "
+print "=============================================="
+print "Stage 3 : Larger NVE/LIMIT"
+print "=============================================="
+
+fix INT all nve/limit 0.10
+
+run 30000
+
+unfix INT
+
+# ------------------------------------------------------------
+# STAGE 4
+# FULL NVT EQUILIBRATION
+# ------------------------------------------------------------
+
+print " "
+print "=============================================="
+print "Stage 4 : NVT Equilibration"
+print "=============================================="
+
+fix NVT all nvt temp ${T} ${T} ${Tdamp}
+
+run 100000
+
+unfix NVT
+
+unfix LANG
+
+# ------------------------------------------------------------
+# SAVE RELAXED MELT
+# ------------------------------------------------------------
+
+write_data melt_equilibrated.data
+
+write_restart melt_equilibrated.restart
+
+# ------------------------------------------------------------
+# FINISHED
+# ------------------------------------------------------------
+
+print " "
+print "=============================================="
+print "MELT RELAXATION COMPLETE"
+print "=============================================="
+print "Input  : linear_melt.data"
+print "Output : melt_equilibrated.data"
+print "Restart: melt_equilibrated.restart"
+print "=============================================="
