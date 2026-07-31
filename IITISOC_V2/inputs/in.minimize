@@ -1,0 +1,11 @@
+############################################################
+
+include inputs/in.main
+
+reset_timestep 0
+
+min_style fire
+
+minimize 1e-6 1e-8 10000 100000
+
+write_data data/minimized.data

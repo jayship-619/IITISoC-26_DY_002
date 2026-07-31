@@ -1,0 +1,17 @@
+############################################################
+# NPT Equilibration
+############################################################
+
+include inputs/in.main
+
+velocity all create 1.0 987654 mom yes rot yes dist gaussian
+
+fix 1 all npt temp 1.0 1.0 1.0 iso 1.0 1.0 10.0
+
+timestep 0.005
+
+run 20000
+
+unfix 1
+
+write_data data/npt.data

@@ -1,0 +1,7 @@
+############################################################
+# Thermodynamic Output
+############################################################
+
+thermo 100
+
+thermo_style custom step temp press pe ke etotal ebond eangle evdwl density

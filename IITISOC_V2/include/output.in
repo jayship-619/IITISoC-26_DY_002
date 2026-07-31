@@ -1,0 +1,9 @@
+############################################################
+# Output
+############################################################
+
+dump traj all custom 100 output/dump/polymer.lammpstrj id mol type x y z
+
+dump_modify traj sort id
+
+restart 5000 output/restart/restart.*

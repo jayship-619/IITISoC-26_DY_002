@@ -1,0 +1,26 @@
+#######################################################
+# FORCE FIELD
+#######################################################
+
+pair_style lj/cut 2.5
+
+pair_coeff * * 0.50 1.0 2.5
+
+pair_modify shift yes
+
+bond_style harmonic
+
+bond_coeff 1 500.0 1.0
+bond_coeff 2 500.0 1.0
+
+angle_style harmonic
+
+angle_coeff 1 80.0 180.0
+
+special_bonds lj 0.0 1.0 1.0
+
+neighbor 2.0 bin
+
+comm_modify cutoff 10.0
+
+neigh_modify every 1 delay 0 check no

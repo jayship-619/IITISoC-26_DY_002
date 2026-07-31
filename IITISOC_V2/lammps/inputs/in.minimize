@@ -1,0 +1,21 @@
+#######################################################
+# MINIMIZATION
+#######################################################
+
+include ../include/system.in
+
+include ../include/forcefield.in
+
+include ../include/output.in
+
+fix 1 all nve/limit 0.02
+
+run 5000
+
+unfix 1
+
+min_style fire
+
+minimize 1.0e-6 1.0e-8 20000 200000
+
+write_data ../../data/lammps/minimized.data

@@ -1,0 +1,24 @@
+#######################################################
+# UNIAXIAL TENSION
+#######################################################
+
+include ../include/system.in
+include ../include/forcefield.in
+
+reset_timestep 0
+
+fix NVT all nvt temp 1.0 1.0 1.0
+
+fix DEF all deform 1 x erate 5.0e-4 units box remap x
+thermo 100
+
+thermo_style custom step temp pxx pyy pzz lx ly lz pe ke etotal
+
+dump TRAJ all custom 100 tension.lammpstrj id type x y z
+
+run 100000
+
+unfix NVT
+unfix DEF
+
+write_data ../../data/lammps/tension_final.data

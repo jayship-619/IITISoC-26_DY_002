@@ -1,0 +1,9 @@
+#######################################################
+# OUTPUT
+#######################################################
+
+thermo 100
+
+thermo_style custom step temp pe ke etotal press density
+
+dump traj all custom 100 ../output/polymer.lammpstrj id mol type x y z

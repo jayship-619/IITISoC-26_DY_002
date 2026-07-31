@@ -1,0 +1,42 @@
+############################################################
+# Tensile Test
+############################################################
+
+include include/variables.in
+
+units lj
+
+dimension 3
+
+boundary p p p
+
+atom_style angle
+
+read_data data/npt.data
+
+include include/forcefield.in
+
+neighbor 1.0 bin
+
+neigh_modify delay 0 every 1 check yes
+
+include include/thermo.in
+
+include include/output.in
+
+velocity all create 1.0 12345 mom yes rot yes dist gaussian
+
+fix 1 all nvt temp 1.0 1.0 1.0
+
+fix 2 all deform 1 x erate 1.0e-5 units box remap x
+
+compute p all pressure thermo_temp
+
+thermo_style custom step temp press pxx pyy pzz lx ly lz
+
+run 20000
+
+unfix 1
+unfix 2
+
+write_data data/tensile.data
