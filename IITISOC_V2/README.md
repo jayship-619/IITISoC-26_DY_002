@@ -5,17 +5,7 @@
 Biomechanical Fingerprinting:
 From Tissue Constitutive Behaviour to Synthetic Polymer Gel Design
 
----
-
-### Objective
-
-Design coarse-grained polymer gels in LAMMPS that reproduce
-experimentally extracted constitutive behaviour using
-Material Fingerprinting.
-
----
-
-### Workflow
+### Part 2 Workflow
 
 Material Fingerprinting
 
@@ -83,10 +73,3 @@ data/
 
 LAMMPS data files
 
----
-
-Author
-
-Kavyansh Raj Singh
-
-IIT Indore
