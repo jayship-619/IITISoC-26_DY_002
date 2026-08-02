@@ -54,12 +54,23 @@ START_POSITION = (10.0, 10.0, 10.0)
 # Simulation Box
 # ==============================================================
 
-BOX_SIZE = 60
 # ==============================================================
+# Target Melt Density(Changed to maintain density)
+# ==============================================================
+
+TARGET_DENSITY = 0.08
+
+NUMBER_OF_ATOMS = NUMBER_OF_CHAINS * CHAIN_LENGTH
+
+BOX_SIZE = (
+    NUMBER_OF_ATOMS / TARGET_DENSITY
+) ** (1.0 / 3.0)
+
+print(f"\nSimulation Box : {BOX_SIZE:.3f}")# ==============================================================
 # Packing Parameters
 # ==============================================================
 
-MIN_CHAIN_DISTANCE = 1.0
+MIN_CHAIN_DISTANCE = 0.70
 
 MAX_PLACEMENT_TRIES = 500
 
@@ -107,27 +118,25 @@ def translate_atoms(
 # Random Chain Origin
 # ==============================================================
 
-def generate_random_origin():
+def generate_random_origin(margin):
     """
     Generate a random starting position for a polymer chain
     inside the simulation box.
     """
 
-    MARGIN = 10.0
-
     x = random.uniform(
-        MARGIN,
-        BOX_SIZE - MARGIN
+        margin,
+        BOX_SIZE - margin
     )
 
     y = random.uniform(
-        MARGIN,
-        BOX_SIZE - MARGIN
+        margin,
+        BOX_SIZE - margin
     )
 
     z = random.uniform(
-        MARGIN,
-        BOX_SIZE - MARGIN
+        margin,
+        BOX_SIZE - margin
     )
 
     return (
@@ -284,7 +293,9 @@ def main():
 
         for attempt in range(MAX_PLACEMENT_TRIES):
 
-            origin = generate_random_origin()
+            origin = generate_random_origin(
+                margin=4.0
+            )
 
             dx = origin[0] - START_POSITION[0]
 
